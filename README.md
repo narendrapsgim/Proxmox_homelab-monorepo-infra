@@ -2,8 +2,9 @@
 
 My personal Kubernetes cluster configuration using [Infrastructure-as-Code](https://www.redhat.com/en/topics/automation/what-is-infrastructure-as-code-iac) and [GitOps](https://www.weave.works/technologies/gitops/) methodologies.
 
-* Previous version based on Docker inside LXC, without k8s - [spirkaa/ansible-homelab](https://github.com/spirkaa/ansible-homelab).
+* Previous version based on Docker inside LXC, without k8s - (https://github.com/narendrapsgim/Proxmox_homelab-monorepo-infra).
 * For inspiration, you can look at how others do it - [k8s-at-home](https://github.com/topics/k8s-at-home).
+* for reeference owner repository [spirkaa/ansible-homelab] 
 
 ## Overview
 
@@ -171,7 +172,7 @@ The hosts run on [Proxmox](https://www.proxmox.com/en/proxmox-ve) as part of a c
 
 1. Clone repository
 
-`git clone --recurse-submodules https://github.com/spirkaa/infra`
+`git clone --recurse-submodules https://github.com/narendrapsgim/Proxmox_homelab-monorepo-infra`
 
 2. Go to directory
 
