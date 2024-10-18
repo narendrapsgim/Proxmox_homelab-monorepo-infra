@@ -1,20 +1,20 @@
 # Infra (Home Kubernetes)
 
-Конфигурация моего персонального кластера Kubernetes с использованием методологий [Infrastructure-as-Code](https://www.redhat.com/en/topics/automation/what-is-infrastructure-as-code-iac) и [GitOps](https://www.weave.works/technologies/gitops/).
+My personal Kubernetes cluster configuration using [Infrastructure-as-Code](https://www.redhat.com/en/topics/automation/what-is-infrastructure-as-code-iac) and [GitOps](https://www.weave.works/technologies/gitops/) methodologies.
 
-* Предыдущая версия на основе Docker внутри LXC, без k8s - [spirkaa/ansible-homelab](https://github.com/spirkaa/ansible-homelab).
-* Для вдохновения можно посмотреть, как делают другие - [k8s-at-home](https://github.com/topics/k8s-at-home).
+* Previous version based on Docker inside LXC, without k8s - [spirkaa/ansible-homelab](https://github.com/spirkaa/ansible-homelab).
+* For inspiration, you can look at how others do it - [k8s-at-home](https://github.com/topics/k8s-at-home).
 
-## Обзор
+## Overview
 
-Основные компоненты разделены по директориям:
+The main components are divided into directories:
 
-* [ansible](ansible) - роли для настройки шаблонов ВМ, первоначального запуска кластера c помощью kubeadm, обновления секретов Vault.
-* [сluster](cluster) - конфигурация приложений в виде чартов Helm, kustomize и простых манифестов k8s, разворачиваемых с помощью ArgoCD.
-* [packer](packer) - создание шаблонов ВМ.
-* [terraform](terraform) - запуск, настройка и управление жизненным циклом ВМ в кластере.
+* [ansible](ansible) - roles for configuring VM templates, initial cluster launch using kubeadm, updating Vault secrets.
+* [сluster](cluster) - application configuration in the form of Helm charts, kustomize and simple k8s manifests deployed using ArgoCD.
+* [packer](packer) - creating VM templates.
+* [terraform](terraform) - launch, configuration and lifecycle management of VMs in a cluster.
 
-### Скриншоты
+### Screenshots
 
 | [![01][screenshot-01]][screenshot-01] | [![02][screenshot-02]][screenshot-02] |
 | :---:                                 | :---:                                 |
@@ -39,43 +39,32 @@
 [screenshot-09]: https://user-images.githubusercontent.com/2718761/184639270-3ced1629-cd55-4bb8-9b72-d6ab41446a7f.png
 [screenshot-10]: https://user-images.githubusercontent.com/2718761/184641506-683e7800-baa7-46b0-936c-be4d49cac270.png
 
-### Железо
+### Hardware
 
-Хосты работают на [Proxmox](https://www.proxmox.com/en/proxmox-ve) в составе кластера.
+The hosts run on [Proxmox](https://www.proxmox.com/en/proxmox-ve) as part of a cluster.
 
-* 1x Custom NAS (Fractal Design Define R6, Corsair RM650x)
-  * Intel Xeon E3-1230 v5
-  * 64GB DDR4 ECC UDIMM
-  * 1TB NVMe SSD (LVM)
-  * 512GB NVMe SSD (LVM)
-  * 2x 20TB, 3x 18TB HDD ([MergerFS](https://perfectmediaserver.com/tech-stack/mergerfs/) + [SnapRAID](https://perfectmediaserver.com/tech-stack/snapraid/))
-  * 2x 12TB HDD (ZFS mirror)
-* 2x Lenovo IdeaCentre G5-14IMB05
-  * Intel Core i5-10400
-  * 32GB DDR4
-  * 1TB NVMe SSD (LVM)
-  * 512GB NVMe SSD (LVM)
+* 1x Custom NAS (Fractal Design Define R6, Corsair RM650x) * Intel Xeon E3-1230 v5 * 64GB DDR4 ECC UDIMM * 1TB NVMe SSD (LVM) * 512GB NVMe SSD (LVM) * 2x 20TB, 3x 18TB HDD ([MergerFS](https://perfectmediaserver.com/tech-stack/ mergerfs/) + [SnapRAID](https://perfectmediaserver.com/tech-stack/snapraid/)) * 2x 12TB HDD (ZFS mirror) * 2x Lenovo IdeaCentre G5-14IMB05 * Intel Core i5-10400 * 32GB DDR4 * 1TB NVMe SSD (LVM) * 512GB NVMe SSD (LVM)
 * 1x Ubiquiti EdgeRouter X
 * 1x Ubiquiti EdgeSwitch 24 Lite
 * 1x CyberPower CP900EPFC
 
-### Внешние сервисы
+### External services
 
-* DNS - [selectel.ru](https://selectel.ru/services/additional/dns/). Бесплатный, есть API и вебхук для cert-manager.
+* DNS - [selectel.ru](https://selectel.ru/services/additional/dns/). Free, has API and webhook for cert-manager.
 * VPS - [sale-dedic.com](https://sale-dedic.com/?from=38415).
-* Мониторинг выполнения cron - [healthchecks.io](https://healthchecks.io/).
-* Мониторинг доступности сервисов - [uptimerobot.com](https://uptimerobot.com/).
-* Сертификаты - [letsencrypt.org](https://letsencrypt.org/).
+* Cron execution monitoring - [healthchecks.io](https://healthchecks.io/).
+* Service availability monitoring - [uptimerobot.com](https://uptimerobot.com/).
+* Certificates - [letsencrypt.org](https://letsencrypt.org/).
 
-## Компоненты кластера Kubernetes
+## Kubernetes Cluster Components
 
-### Виртуальные машины Ubuntu 22.04
+### Ubuntu 22.04 Virtual Machines
 
 * 3x Control Plane (2 vCPU, 4 GB)
 * 3x Worker (4/6 vCPU, 16 GB)
 * 2x Control Plane Load Balancer (1 vCPU, 1 GB)
 
-### База
+### Base
 
 * [runc](https://github.com/opencontainers/runc)
 * [cni](https://github.com/containernetworking/plugins)
@@ -84,82 +73,74 @@
 * [nerdctl](https://github.com/containerd/nerdctl)
 * [kubelet, kubeadm, kubectl](https://github.com/kubernetes/kubernetes)
 
-### Сеть
-
+### Network
 * [Calico](https://github.com/projectcalico/calico)
 * [MetalLB](https://github.com/metallb/metallb)
-* [ingress-nginx](https://github.com/kubernetes/ingress-nginx)
-* [cert-manager](https://github.com/cert-manager/cert-manager) + [cert-manager-webhook-selectel](https://github.com/selectel/cert-manager-webhook-selectel)
-* [Keepalived](https://www.keepalived.org) + [HAProxy](https://www.haproxy.com) вне кластера для Control Plane
-* [consul](https://github.com/hashicorp/consul)
+* [ingress-nginx](https://github.com/kubernetes/ingress-nginx
+*  [cert-manager](https://github.com/cert-man ager/cert-manager) + [cert-manager-webhook-selectel](https://github.com/selectel/cert-manager-webhook-selectel)
+*  [Keepalived](https://www.keepalived.org) + [HAProxy](https://www.haproxy.com) outside the cluster for Control Plane
+*  [consul](https://github.com/hashicorp/consul) ### Storage * [Longhorn](https://github.com/longhorn/longhorn)
+*   [minio](https://github.com/minio/minio)
+*    NFS
 
-### Хранилище
+ ### Observability (logs, metrics, traces, alerts)
+  * [kube-prometheus-stack](https://github.com/prometheus-community/helm -charts)
+  *  [Prometheus](https://github.com/prometheus/prometheus)
+  *   [Alertmanager](https://github.com/prometheus/alertmanager)
+  *   [Grafana](https://github.com/grafana/grafana)
+  *   [Blackbox Exporter](https://github.com/prometheus/blackbox_exporter)
+  *    [Thanos](https://github.com/thanos-io/thanos)
+  *    [Loki](https://github.com/grafana/loki)
+  *    [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/)
+  *    [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
+  *    [karma](https://github.com/prymitive/karma)
+  *    [signoz](https://github.com/SigNoz/signoz)
+  
+ ### CI/CD, GitOps
+  *    [signoz](https://github.com/SigNoz/signoz)
+  *    [ArgoCD](https://github.com/argoproj/argo-cd) + [argocd-vault-plugin](https://github.com/argoproj-labs/argocd-vault-plugin)
+  *    [Renovate](https://github.com/renovatebot/renovate)
+  *    [gitlab-runner](https://gitlab.com/gitlab-org/charts/gitlab-runner)
+  *    [jenkins k8s agent](https://github.com/jenkinsci/jenkins )
+### Secrets 
 
-* [Longhorn](https://github.com/longhorn/longhorn)
-* [minio](https://github.com/minio/minio)
-* NFS
+  *    [Vault](https://github.com/hashicorp/vault) + [vault-bootstrap](https://github.com/spirkaa/vault-bootstrap)
+  *    [external-secrets](https://github.com/external-secrets/external-secrets/)
+    
+### Auth 
 
-### Observability (логи, метрики, трейсы, алерты)
-
-* [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts)
-  * [Prometheus](https://github.com/prometheus/prometheus)
-  * [Alertmanager](https://github.com/prometheus/alertmanager)
-  * [Grafana](https://github.com/grafana/grafana)
-* [Blackbox Exporter](https://github.com/prometheus/blackbox_exporter)
-* [Thanos](https://github.com/thanos-io/thanos)
-* [Loki](https://github.com/grafana/loki)
-* [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/)
-* [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
-* [karma](https://github.com/prymitive/karma)
-* [signoz](https://github.com/SigNoz/signoz)
-
-### CI/CD, GitOps
-
-* [ArgoCD](https://github.com/argoproj/argo-cd) + [argocd-vault-plugin](https://github.com/argoproj-labs/argocd-vault-plugin)
-* [Renovate](https://github.com/renovatebot/renovate)
-* [gitlab-runner](https://gitlab.com/gitlab-org/charts/gitlab-runner)
-* [jenkins k8s agent](https://github.com/jenkinsci/jenkins)
-
-### Secrets
-
-* [Vault](https://github.com/hashicorp/vault) + [vault-bootstrap](https://github.com/spirkaa/vault-bootstrap)
-* [external-secrets](https://github.com/external-secrets/external-secrets/)
-
-### Auth
-
-* [dex](https://github.com/dexidp/dex)
-* [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy)
-* [teleport](https://github.com/gravitational/teleport)
-
+  *    [dex](https://github.com/dexidp/dex)
+  *    [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy)
+  *  [teleport](https://github.com/gravitational/teleport)
+    
 ### Backup
 
-* [velero](https://github.com/vmware-tanzu/velero)
+  *    [velero](https://github.com/vmware-tanzu/velero) 
+    
+### Utilities
+  *  [signoz](https://github.com/SigNoz/signoz)
+  *  [descheduler](https ://github.com/kubernetes-sigs/descheduler)
+  *  [kured](https://github.com/kubereboot/kured)
+  *  [Reloader](https://github.com/stakater/Reloader)
+  *  [kubernetes-event-exporter](https://github.com/resmoio/kubernetes-event-exporter)
+  *  [Vertical Pod Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler)
+  *  [Goldilocks](https://github.com/FairwindsOps/goldilocks)
 
-### Утилиты
+## Payloads (user applications)
 
-* [descheduler](https://github.com/kubernetes-sigs/descheduler)
-* [kured](https://github.com/kubereboot/kured)
-* [Reloader](https://github.com/stakater/Reloader)
-* [kubernetes-event-exporter](https://github.com/resmoio/kubernetes-event-exporter)
-* [Vertical Pod Autoscaler](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler)
-* [Goldilocks](https://github.com/FairwindsOps/goldilocks)
-
-## Полезные нагрузки (пользовательские приложения)
-
-### Мои разработки
+### My developments
 
 * [gia-api](https://github.com/spirkaa/gia-api)
 * [samgrabby](https://github.com/spirkaa/samgrabby)
 * [devmem.ru](https://github.com/spirkaa/devmem.ru)
 
-### Частное облако
+### Private cloud
 
 * [Nextcloud](https://github.com/nextcloud/server)
 * [Syncthing](https://github.com/syncthing/syncthing)
-* [docker-mailserver](https://github.com/docker-mailserver/docker-mailserver)
-* [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
+* [docker-mailserver](https://github.com/docker-mailserver/docker-mailserver) * [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
 
-### Медиа-сервер
+### Media-saver
 
 * [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)
 * [Bazarr](https://github.com/morpheus65535/bazarr)
@@ -173,63 +154,63 @@
 * [Tautulli](https://github.com/Tautulli/Tautulli)
 * [Ombi](https://github.com/Ombi-app/Ombi)
 
-### Управление
-
+  
+### Management
 * [Dashy](https://github.com/lissy93/dashy)
-* [Portainer](https://github.com/portainer/portainer)
+* [Portainer] (https://github.com/portainer/portainer)
 * [UniFi Network](https://help.ui.com/hc/en-us/categories/200320654)
 
-## Запуск кластера
+## Starting a cluster
 
-### Требования
+### Requirements
 
-* Сервер Proxmox
-* Клиент Linux с установленными `git` и `docker` для запуска контейнера с утилитами
+* Proxmox server
+* Linux client with `git` and `docker` installed to run container with utilities
 
-### Алгоритм запуска
+### Launch algorithm
 
-1. Клонировать репозиторий
+1. Clone repository
 
-    `git clone --recurse-submodules https://github.com/spirkaa/infra`
+`git clone --recurse-submodules https://github.com/spirkaa/infra`
 
-2. Перейти в каталог
+2. Go to directory
 
-    `cd infra`
+`cd infra`
 
-3. Скопировать env-файл
+3. Copy env file
 
-    `cp .env.example .env`
+`cp .env.example .env`
 
-4. Указать необходимые значения в env-файле
+4. Specify required values ​​in env file
 
-    `nano .env`
+`nano .env`
 
-5. Проверить/изменить значения переменных
+5. Check/change variable values
 
     * ansible/roles/\**/**/defaults/main.yml
     * [packer/variables.pkr.hcl](packer/variables.pkr.hcl)
     * [terraform/locals.tf](terraform/locals.tf)
 
-6. Собрать образ с утилитами и запустить контейнер
+6. Build an image with utilities and run the container
 
-    `make tools`
+`make tools`
 
-7. Запустить развертывание кластера
+7. Run cluster deployment
 
-    `make cluster`
+`make cluster`
 
-После запуска автоматически выполняются следующие шаги:
+After launch, the following steps are performed automatically:
 
-|     | Описание                                   | Инструменты        |
-| :-: | -                                          | -                  |
-| 8   | Создать пользователя для API Proxmox       | Ansible            |
-| 9   | Подготовить шаблоны ВМ                     | Packer, Ansible    |
-| 10  | Создать ВМ из шаблонов, развернуть кластер | Terraform, Ansible |
-| 11  | Развернуть приложения в кластере           | ArgoCD             |
+| | Description | Tools |
+| :-: | - | - |
+| 8 | Create a user for the Proxmox API | Ansible |
+| 9 | Prepare VM templates | Packer, Ansible |
+| 10 | Create VM from templates, deploy cluster | Terraform, Ansible |
+| 11 | Deploy applications to cluster | ArgoCD |
 
-## Пользователь для доступа Packer и Terraform к API Proxmox
+## User for Packer and Terraform access to Proxmox API
 
-Создать пользователя можно с помощью роли [pve/api_user](ansible/roles/pve/api_user) или вручную, выполнив команды в консоли сервера Proxmox и сохранив вывод последней. **Для работы с кластером Proxmox назначены дополнительные права, не указанные в документации провайдера [telmate/proxmox](https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md#creating-the-proxmox-user-and-role-for-terraform)**
+You can create a user using the [pve/api_user](ansible/roles/pve/api_user) role or manually by running commands in the Proxmox server console and saving the output of the latter. **Additional rights not specified in the provider documentation have been assigned to work with the Proxmox cluster [telmate/proxmox](https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md#creating-the-proxmox-user-and-role-for-terraform)**
 
 `pveum role add Provisioner -privs "Datastore.AllocateSpace Datastore.Audit Pool.Allocate Pool.Audit Sys.Audit Sys.Modify VM.Allocate VM.Audit VM.Clone VM.Config.CDROM VM.Config.CPU VM.Config.Cloudinit VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Console VM.Monitor VM.PowerMgmt"`
 
@@ -239,65 +220,64 @@
 
 `pveum user token add hashicorp@pve packer-terraform --privsep 0`
 
-## Базовый шаблон ВМ (cloud-init)
+## Basic VM template (cloud-init)
 
-Подготовка выполняется в 2 этапа:
+Preparation is performed in 2 stages:
 
-1. [Ansible](https://www.ansible.com/) скачивает образ [Ubuntu Cloud](https://cloud-images.ubuntu.com/releases/jammy/), с помощью `virt-customize` устанавливает в образ пакет `qemu-guest-agent` и сбрасывает `machine-id`, создает ВМ в Proxmox и импортирует образ (но не запускает), преобразует ВМ в шаблон. Готовый шаблон должен оставаться в системе для идемпотентности.
-1. [Packer](https://www.packer.io/) клонирует шаблон из п.1, запускает ВМ, настраивает с помощью Ansible, преобразует в шаблон.
+1. [Ansible](https://www.ansible.com/) downloads the [Ubuntu Cloud](https://cloud-images.ubuntu.com/releases/jammy/) image, installs the `qemu-guest-agent` package into the image using `virt-customize` and resets the `machine-id`, creates the VM in Proxmox and imports the image (but does not start it), converts the VM into a template. The finished template must remain in the system for idempotency.
+2. [Packer](https://www.packer.io/) clones the template from step 1, starts the VM, configures it using Ansible, converts it to a template.
 
-Разворачивание ВМ из шаблона выполняется с помощью [Terraform](https://www.terraform.io/).
+Deploying the VM from the template is done using [Terraform](https://www.terraform.io/).
 
-## Выключение/перезагрузка ноды
+## Shutdown/reboot node
 
-1. Снять нагрузку
+1. Remove load
 
-    ```bash
-    kubectl drain k8s-worker-01 --ignore-daemonsets --delete-emptydir-data --pod-selector='app!=csi-attacher,app!=csi-provisioner'
-    ```
+```bash
+kubectl drain k8s-worker-01 --ignore-daemonsets --delete-emptydir-data --pod-selector='app!=csi-attacher,app!=csi-provisioner'
+```
 
-1. Настроить заглушку уведомлений в Alertmanager
+2. Configure notification stub in Alertmanager
 
-1. После включения разрешить нагрузку
+3. After enabling, allow load
 
-    ```bash
-    kubectl uncordon k8s-worker-01
-    ```
+```bash
+kubectl uncordon k8s-worker-01
+```
 
-## Замена ноды
+## Replace node
 
-1. Снять нагрузку
+1. Remove load
 
-    ```bash
-    kubectl drain k8s-controlplane-02 --ignore-daemonsets --delete-emptydir-data --pod-selector='app!=csi-attacher,app!=csi-provisioner'
-    ```
+```bash
+kubectl drain k8s-controlplane-02 --ignore-daemonsets --delete-emptydir-data --pod-selector='app!=csi-attacher,app!=csi-provisioner'
+```
 
-1. Удалить из k8s
+2. Remove from k8s
 
-    ```bash
-    kubectl delete node k8s-controlplane-02
-    ```
+```bash
+kubectl delete node k8s-controlplane-02
+```
 
-1. Удалить из кластера etcd (для control plane)
+3. Remove etcd from cluster (for control plane)
 
-    Получить список и скопировать нужный <MEMBER_ID>
+Get list and copy needed <MEMBER_ID>
 
-    ```bash
-    kubectl -n kube-system exec -it etcd-k8s-controlplane-04 -- sh -c 'ETCDCTL_API=3 etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member list -w table'
-    ```
+```bash
+kubectl -n kube-system exec -it etcd-k8s-controlplane-04 -- sh -c 'ETCDCTL_API=3 etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member list -w table'
+```
 
-    Удалить участника <MEMBER_ID>
+Delete member <MEMBER_ID>
 
-    ```bash
-    kubectl -n kube-system exec -it etcd-k8s-controlplane-04 -- sh -c 'ETCDCTL_API=3 etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member remove <MEMBER_ID>'
-    ```
+```bash
+kubectl -n kube-system exec -it etcd-k8s-controlplane-04 -- sh -c 'ETCDCTL_API=3 etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member remove <MEMBER_ID>'
+```
 
-1. Удалить и добавить ноду через Terraform
+4. Remove and add node via Terraform
 
-## Дефрагментация etcd
+## etcd defragmentation
 
 <https://etcd.io/docs/v3.5/op-guide/maintenance/#defragmentation>
 
 ```bash
-kubectl -n kube-system exec -it etcd-k8s-controlplane-04 -- sh -c 'ETCDCTL_API=3 etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" defrag --cluster'
-```
+kubectl -n kube-system exec -it etcd-k8s-controlplane-04 -- sh -c 'ETCDCTL_API=3 etcdctl --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" defrag --cluster' ```
