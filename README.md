@@ -176,7 +176,7 @@ The hosts run on [Proxmox](https://www.proxmox.com/en/proxmox-ve) as part of a c
 
 2. Go to directory
 
-`cd infra`
+`cd Proxmox_homelab-monorepo-infra`
 
 3. Copy env file
 
